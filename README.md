@@ -8,7 +8,7 @@
 # About rankedStudy
 
 Choose a side and work together with other users to gain points for your team by studying! Click on a side and start a timer.
-Studying for 15 minuets adds one point to your chosen side. Work to fill up the bar and reach 200 points! Use the points you gain to buy powerups that 5x your points. This project is just a test on how to make a simple CRUD app.
+Studying for 15 minuets adds one point to your chosen side. Work to fill up the bar and reach 200 points! Use the points you gain to buy powerups that 5x your points. This project is just a test on how to make a simple database app.
 
 To run on your local machine, download the project and run, cargo run to build. The project is served on your localhost at port 8080.
 
