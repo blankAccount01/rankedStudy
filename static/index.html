@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    :root {
+        --hoverOpacity : 0.5;
+    }
+    * {
+        overflow: hidden;
+    }
+    body,html{
+        margin: 0;
+    }
+    #mainApp {
+        width: 100vw;
+        height: 100vh;
+        top: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
+        align-items:center;
+        background-color: #16171C;
+    }
+
+    .side {
+        flex:1;
+        text-align: center;
+        height: 99.7vh;
+        transition: flex-grow 0.7s ease;
+    }
+    #redSide{
+        background-color: #331E1D;
+        display: grid;
+        grid-template-columns: 55% 45%;
+        grid-template-rows: 60% 40%;
+    }
+    #blueSide{
+        background-color: #1C2B33;
+        display: grid;
+        grid-template-columns: 55% 45%;
+        grid-template-rows: 60% 40%;
+    }
+    #midGround {
+        display: flex;
+        justify-content: center;
+        align-items:center;
+        flex:10000;
+    }
+    #redSideMid{
+        background-color: #331E1D;
+        box-shadow: 
+            inset 0 3px 0 0px #C17373,
+            inset 0 -3px 0 0px #C17373,
+            inset 3px 0 0 0px #C17373,
+            inset -1.5px 0 0 0px #4F8C77;
+        border-radius: 20px 20px 0px 20px;
+    }
+    
+    #blueSideMid{
+        background-color: #1C2B33;
+        box-shadow: 
+            inset 0 3px 0 0px #5789A3,
+            inset 0 -3px 0 0px #5789A3,
+            inset -3px 0 0 0px #5789A3,
+            inset 1.5px 0 0 0px #4F8C77;
+        border-radius: 20px 20px 20px 0px;
+    }
+
+    .active .selection{
+        animation: fadeIn 1s ease-out forwards;
+    }
+    .active .selection{
+        animation: fadeIn 1s ease-out forwards;
+    }
+    .selection {
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 30px;
+        opacity: 0;
+        display: block;
+        user-select: none;
+        z-index: 1;
+    }
+    @keyframes fadeIn {
+        10% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+    @keyframes fadeOut {
+        0% {
+            opacity: 1;
+        }
+        90% {
+            opacity: 0;
+        }
+    }
+    #selectionTitle{
+        position: absolute;
+        left: 50%;
+        top:10%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 40px;
+        font-weight: bold;
+        background-color: #16171C;
+        padding: 40px;
+        border-radius: 0px 0px 20px 20px;
+        border: solid 3px #4F8C77;
+    }
+
+    .arrow {
+        width: 8px;
+        height: 8px;
+        border: solid rgb(255, 255, 255);
+        border-width: 0 8px 8px 0;
+        display: inline-block;
+        padding: 3px;
+        transform: rotate(135deg);
+        -webkit-transform: rotate(135deg);
+
+    }
+    #arrow2Rotate {
+        transform: rotate(-45deg);
+        -webkit-transform: rotate(-45deg);
+    }
+    #arrow2Rotate {
+        animation:
+            y2 2s infinite cubic-bezier(.5,600,.5,-600),
+            visible 1s 1 linear;
+        position: relative;
+        left:0px;
+        animation-delay: 1s;
+    }
+
+    .arrow{
+        animation:
+            y2 2s infinite cubic-bezier(.5,600,.5,-600),
+            visible 1s 1 linear;
+        position: relative;
+        left:0px;
+        opacity: 0.9;
+    }
+    @keyframes y2 {
+        to {
+        left:-0.05px;
+        opacity: 0.9;
+        }
+    }
+    .arrowContainer {
+        position: absolute;
+        width: 50px;
+        height: 80px;
+        overflow: visible;
+        top: 50%;
+        right: 50%;
+        z-index: 1;
+    }
+    #arrow1 {
+        right: 50%;
+    }
+    #arrow2 {
+        left: 50%;
+    }
+
+    /*Timer styles*/
+    #timer {
+        height: 100%;
+        width: 100%;
+    }
+    #timer2 {
+        height: 100%;
+        width: 100%;
+    }
+    .container{
+        font-family: sans-serif;
+        height: 90%;
+        width: 90%;
+        place-items: center;
+        border-radius: 20px;
+        background-color: #331E1D;
+        border: #C17373 solid 3px;
+        color: #C17373;
+        position: relative;
+        top: 50%;
+        left:50%;
+        transform: translate(-50%, -50%);
+        align-content: center;
+    }
+    #blueMod{
+        border: #5789A3 solid 3px;
+        color: #5789A3;
+        background-color: #1C2B33;
+    }
+    .base-timer {
+        position: relative;
+        height: 100%
+    }
+
+    .base-timer__svg {
+        transform: scaleX(-1);
+        height: 80%;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .base-timer__circle {
+        fill: none;
+        stroke: none;
+    }
+
+    .base-timer__path-elapsed {
+        stroke-width: 7px;
+        stroke: #412625;
+    }
+
+    .base-timer__path-remaining {
+        stroke-width: 7px;
+        stroke-linecap: round;
+        transform: rotate(90deg);
+        transform-origin: center;
+        transition: 1s linear all;
+        fill-rule: nonzero;
+        stroke: currentColor;
+    }
+
+
+    .base-timer__path-remaining.green {
+        color: #C17373;;
+    }
+    .base-timer__path-remaining.blue {
+        color: #5789A3;
+    }
+
+    .base-timer__path-remaining.orange {
+        color: orange;
+    }
+
+    .base-timer__path-remaining.red {
+        color: red;
+    }
+
+    .base-timer__label {
+        position: absolute;
+        height: 80%;
+        width: 100%;
+        top: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: clamp(10px,20vw,40px);
+        font-family: Arial, Helvetica, sans-serif;
+        user-select: none;
+    }
+
+
+    #timerButton {
+        font-size: 35px;
+        flex: 3;
+        width: 20vw;
+        height: 40px;
+        background-color: #C17373;
+        color: #331E1D;
+        font-weight:bolder;
+        border-radius: 15px;
+        user-select: none;
+    }
+    #timerButton2 {
+        font-size: 35px;
+        flex: 3;
+        width: 20vw;
+        height: 40px;
+        background-color: #5789A3; 
+        color: #1C2B33;
+        font-weight:bolder;
+        border-radius: 15px;
+        user-select: none;
+    }
+    .timerControls {
+        font-size: 35px;
+        height: 40px;
+        flex: 1;
+        background-color: #C17373;
+        color: #331E1D;
+        font-weight:bolder;
+        border-radius: 15px;
+        user-select: none;
+    }
+    .timerButtonContainer{
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 0 5vw 0 5vw;
+    }
+    #stats {
+        left:45%;
+    }
+    .containerInner{
+        width: 90%;
+        height: 90%;
+    }
+    #id {
+        display: flex;
+        text-align: left;
+        font-size: 15px;
+        line-height: 40px;
+    }
+    #leftColumn{
+        flex: 4;
+    }
+    #rightColumn{
+        flex: 1;
+        flex-grow: 2;
+    }
+    .title {
+        font-size: 40px;
+        font-weight: bolder;
+        margin-bottom: 20px;
+    }
+    #shop{
+        grid-column: span 2;
+        left: 49%;
+        width: 93%;
+        height: 85%;
+        top: 45%
+    }
+    #shopGrid {
+        display: flex;
+        text-align: left;
+    }
+    #shopGrid{
+        display: grid;
+        grid-template-columns: 33% 33% 33%;
+        grid-template-rows: 50% 50%;
+        height: 70%;
+    }
+    .shopItem{
+        border: #C17373 solid 3px;
+        width: calc(100% - 20px);
+        height: calc(100% - 20px);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        box-sizing: border-box;
+        user-select: none;
+    }
+    .itemTitle{
+        flex: 1;
+        text-align: center;
+        font-size: 20px;
+    }
+    .itemBuy{
+        flex: 1;
+        background-color: #C17373;
+        height: 100%;
+        width: 100%;
+        box-sizing: border-box;
+        color: #331E1D;
+        text-align: center;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        
+    }
+    .itemBuy:hover{
+        background-color: #a46363;
+        transition: background-color 0.5s ease;
+    }
+    .shopItem2{
+        border: #5789A3 solid 3px;
+        width: calc(100% - 20px);
+        height: calc(100% - 20px);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        box-sizing: border-box;
+    }
+    .itemTitle2{
+        flex: 1;
+        text-align: center;
+        font-size: 20px;
+    }
+    .itemBuy2{
+        flex: 1;
+        background-color: #5789A3;
+        height: 100%;
+        width: 100%;
+        box-sizing: border-box;
+        color: #1C2B33;
+        text-align: center;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+    .mid {
+        display: flex;
+    }
+    .bar {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        transition: flex 0.25s ease-out;
+    }
+    .progressBar {
+        width: 50%;
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    .barContainer{
+        width: 100%;
+        height: 80%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: height ease-in-out;
+        transition-duration: 0.4s;
+    }
+    #redBar{
+        border: #C17373 3px solid;
+    }
+    #blueBar{
+        border: #5789A3 3px solid;
+    }
+    #incompleteRed{
+        flex:1;
+    }
+    #completeRed{
+        flex:1;
+        background-color: #C17373;
+    }
+    #incompleteBlue{
+        flex:1;
+    }
+    #completeBlue{
+        flex:1;
+        background-color: #5789A3;
+    }
+    .progressInfo{
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 20px;
+        margin-top: 10px;
+        font-weight: bolder;
+    }
+    .red {
+        color: #C17373;
+    }
+    .blue {
+        color:#5789A3;
+    }
+    .background{
+        position:absolute;
+        width: 50%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0);
+        transition: background 0.3s ease;
+    }
+    .background:hover{
+        background: rgba(0, 0, 0, var(--hoverOpacity));
+    }
+    .selection:hover ~ .background {
+        background: rgba(0, 0, 0, var(--hoverOpacity));
+    }
+    #introScreen {
+        width: 100vw;
+        height: 100vh;
+        z-index: 2;
+        position: absolute;
+        background-color: #16171C;
+    }
+    #logo {
+        width: clamp(50px, 90vw,600px);
+        top: 35%;
+        left:50%;
+        transform: translate(-50%, -50%);
+        position: relative;
+    }
+    #startContainer {
+        width: clamp(100px,60vw,300px);
+        height: clamp(0px,10vw,45px);
+        border: solid #4F8C77 5px;
+        bottom: calc(50% - 150px);
+        left:50%;
+        transform: translate(-50%, -50%);
+        position: absolute;
+        display: flex;
+    }
+    input, textarea {
+        all: unset;
+        display: block;
+        width: 100%;
+    }
+
+</style>
+<body>
+    <div id="introScreen">
+        <div id="logo">
+            <img width="100%" src="/static/assets/static.png" alt="logo">
+        </div>
+        <div id="startContainer">
+            <input id="usernameField" type="text" maxlength="8" style="flex: 4; font-size: 40px; color: white; padding: 10px; font-family: Arial, Helvetica, sans-serif;">
+            <div id="joinButton" style="flex: 1; background-color: #4F8C77; min-width:40px; font-size: 40px; display: flex; align-items: center; justify-content: center;"><img height="70%" src="/static/assets/arrow.png" alt="start"></div>
+        </div>
+    </div>
+    <div id="mainApp">
+        <div class="side mainSide" id="redSide">
+            <div class="instruction2" style="z-index: 3; position:absolute; transform: translate(-50%, -50%); top: 10%; left: 47%; display: none;"><img src="/static/assets/Instruction3.png" width="300px"></div>
+            <div class="instruction2" style="z-index: 3; position:absolute; transform: translate(-50%, -50%); top: 15%; left: 47%; display: none;"><img src="/static/assets/Instruction4.png" width="100px"></div>
+            <div class="container">
+                <div id="timer"></div>
+            </div>
+            <div class="container" id="stats">
+                <div class="containerInner">
+                    <div class="title">Statistics</div>
+                    <div id="id">
+                        <div id="leftColumn" style="user-select: none;">
+                            Points:<br>
+                            Number of hours completed on red:<br>
+                            Total point contributed (lifetime):<br>
+                            Total point contributed (weekly):<br>
+                            Rank on leaderboard:<br>
+                        </div>
+                        <div id="rightColumn">
+                            0 pts<br>
+                            0 hrs<br> 
+                            0 pts<br>
+                            0 pts<br>
+                            1st<br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container" id="shop">
+                <div class="containerInner" style="text-align: left;">
+                    <div style="display:flex; align-items: center;">
+                        <div class="title" style="flex: 4;">Shop</div>
+                        <div id="modifierRed" class="title" style="flex: 1; user-select: none; font-size: 2.5vw; font-weight: normal;">Modifier: 0</div>
+                    </div>
+                    <div id="shopGrid">
+                        <div class="shopItem">
+                            <div class="itemTitle">2x Multiplier</div>
+                            <div class="itemBuy">Buy (10pt)</div>
+                        </div>
+                        <div class="shopItem">
+                            <div class="itemTitle">3x Multipler</div>
+                            <div class="itemBuy">Buy (20pt)</div>
+                        </div>
+                        <div class="shopItem">
+                            <div class="itemTitle">4x Multipler</div>
+                            <div class="itemBuy">Buy (30pt)</div>
+                        </div>
+                        <div class="shopItem">
+                            <div class="itemTitle">5x Multipler</div>
+                            <div class="itemBuy">Buy (50pt)</div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        <div class="side mainSide" id="midGround">
+            <div id="selectionTitle" style="z-index: 1;">Select a team!</div>
+            <div class="side mid" id="redSideMid">
+                <div class="arrowContainer" id="arrow1">
+                    <div class="arrow"></div>
+                </div>
+                <div class="instruction" style="position:absolute; transform: translate(-50%, -50%); top: 23%; left: 37%; opacity: 1;"><img src="/static/assets/Instruction1.png" width="200px"></div>
+                <div class="instruction" style="position:absolute; transform: translate(-50%, -50%); bottom: -7%; left: 35%; opacity: 1;"><img src="/static/assets/Instruction2.png" width="200px"></div>
+                <div style="flex: 1;"></div>
+                <div class="bar">
+                    <div class="barContainer">
+                        <div class="progressInfo red">500</div>
+                        <div class="progressBar" id="redBar">
+                            <div id="incompleteRed"></div>
+                            <div id="completeRed"></div>
+                        </div>
+                        <div class="progressInfo red" id="redProgress">0</div>
+                    </div>
+                </div>
+                <div style="flex: 1;"></div>
+                <div class="selection" style="color: #C17373; left: 25%;">
+                    Join the red team!
+                </div>
+                <div class="background"></div>
+            </div>
+            <div class="side mid" id="blueSideMid">
+                <div class="arrowContainer" id="arrow2">
+                    <div class="arrow" id="arrow2Rotate"></div>
+                </div>
+                
+                <div style="flex: 1;"></div>
+                <div class="bar">
+                    <div class="barContainer">
+                        <div class="progressInfo blue">500</div>
+                        <div class="progressBar" id="blueBar">
+                            <div id="incompleteBlue"></div>
+                            <div id="completeBlue"></div>
+                        </div>
+                        <div class="progressInfo blue" id="blueProgress">0</div>
+                    </div>
+                </div>
+                <div style="flex: 1;"></div>
+                <div class="selection" style="color:#5789A3; left: 75%;">
+                    Join the blue team!
+                </div>
+                <div class="background"></div>
+            </div>
+        </div>
+        <div class="side mainSide" id="blueSide">
+            <div class="container" id="blueMod">
+                <div id="timer2"></div>
+            </div>
+            <div class="container" id="stats" style="background-color: #1C2B33; color: #5789A3; border: #5789A3 3px solid;">
+                <div class="containerInner">
+                    <div class="title">Statistics</div>
+                    <div id="id">
+                        <div id="leftColumn" style="user-select: none;">
+                            Points:<br>
+                            Number of hours completed on blue:<br>
+                            Total point contributed (lifetime):<br>
+                            Total point contributed (weekly):<br>
+                            Rank on leaderboard:<br>
+                        </div>
+                        <div id="rightColumn2">
+                            0 pts<br>
+                            0 hrs<br>
+                            0 pts<br>
+                            0 pts<br>
+                            1st<br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container" id="shop" style="background-color: #1C2B33; color: #5789A3; border: #5789A3 3px solid;">
+                <div class="containerInner" style="text-align: left;">
+                    <div style="display:flex; align-items: center;">
+                        <div class="title" style="flex: 4;">Shop</div>
+                        <div id="modifierBlue" class="title" style="flex: 1; font-size: 2.5vw; user-select: none; font-weight: normal;">Modifier: 0</div>
+                    </div>
+                    <div id="shopGrid">
+                        <div class="shopItem2">
+                            <div class="itemTitle2">2x Multiplier</div>
+                            <div class="itemBuy2">Buy (10pt)</div>
+                        </div>
+                        <div class="shopItem2">
+                            <div class="itemTitle2">3x Multipler</div>
+                            <div class="itemBuy2">Buy (20pt)</div>
+                        </div>
+                        <div class="shopItem2">
+                            <div class="itemTitle2">4x Multipler</div>
+                            <div class="itemBuy2">Buy (30pt)</div>
+                        </div>
+                        <div class="shopItem2">
+                            <div class="itemTitle2">5x Multipler</div>
+                            <div class="itemBuy2">Buy (50pt)</div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</body>
+<script type="module">
+    let red = 0;
+    let blue = 0;
+    let username = "";
+
+    async function fetchGlobalProgress() {
+        try {
+            const response = await fetch("http://127.0.0.1:8080/api/data");
+            if (!response.ok){
+                throw new Error("Server Response Error");
+            }
+            const data = await response.json();
+            red = data.red;
+            blue = data.blue;
+            updateStats();
+        } catch (error){
+            console.log("Error receiving data")
+        }
+    }
+
+    function validateForm(input) {
+        const pattern = /^[a-zA-Z0-9\s]*$/;
+
+        if (!pattern.test(input)) {
+            alert("Invalid input!");
+            return false;
+        }
+        return true;
+    }
+
+
+    function generateRandomString(length) {
+        const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        let randomString = "";
+
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * charset.length);
+            randomString += charset[randomIndex];
+        }
+
+        return randomString;
+    }
+    let userid="0";
+    if (localStorage.getItem("userid") === null) {localStorage.setItem("userid", generateRandomString(10));userid = localStorage.getItem("userid");}
+    else {userid = localStorage.getItem("userid");}
+
+    fetchGlobalProgress();
+    setInterval(fetchGlobalProgress,2000);
+
+    let points = 0;
+    if (localStorage.getItem("points") === null) {localStorage.setItem(points, 0);}
+    else {points = parseFloat(localStorage.getItem("points"));}
+    
+    let redPoints = 0;
+    if (localStorage.getItem("redPoints") === null) {localStorage.setItem(redPoints, 0);}
+    else {redPoints = parseFloat(localStorage.getItem("redPoints"));}
+
+    let bluePoints = 0;
+    if (localStorage.getItem("bluePoints") === null) {localStorage.setItem(bluePoints, 0);}
+    else {bluePoints = parseFloat(localStorage.getItem("bluePoints"));}
+
+    let lifetimePoints = 0;
+    if (localStorage.getItem("lifetimePoints") === null) {localStorage.setItem(lifetimePoints, 0);}
+    else {lifetimePoints = parseFloat(localStorage.getItem("lifetimePoints"));}
+
+    let lifetimePoints2 = 0;
+    if (localStorage.getItem("lifetimePoints2") === null) {localStorage.setItem(lifetimePoints2, 0);}
+    else {lifetimePoints2 = parseFloat(localStorage.getItem("lifetimePoints2"));}
+
+    let weeklyPoint = 0;
+    if (localStorage.getItem("weeklyPoint") === null) {localStorage.setItem(weeklyPoint, 0);}
+    else {weeklyPoint = parseFloat(localStorage.getItem("weeklyPoint"));}
+
+    let weeklyPoint2 = 0;
+    if (localStorage.getItem("weeklyPoint2") === null) {localStorage.setItem(weeklyPoint2, 0);}
+    else {weeklyPoint2 = parseFloat(localStorage.getItem("weeklyPoint2"));}
+
+    let rank = 1;
+    let modifier = 1;
+    if (localStorage.getItem("modifier") === null) {localStorage.setItem(modifier, 1);}
+    else {modifier = parseFloat(localStorage.getItem("modifier"));}
+
+    let modifier2 = 1;
+    if (localStorage.getItem("modifier2") === null) {localStorage.setItem(modifier2, 1);}
+    else {modifier2 = parseFloat(localStorage.getItem("modifier2"));}
+
+    let sideView = false;
+    document.getElementById('usernameField').addEventListener('keydown',()=>{if (event.key === 'Enter') {event.preventDefault();usernameSubmit();}})
+    addMultipleEventListeners(document.getElementById('joinButton'), 'click touchstart',usernameSubmit)
+    
+    function usernameSubmit(){
+        let tempholder = document.getElementById('usernameField').value;
+        if (tempholder == null || tempholder == ''){
+            alert('Empty Username!');
+            return false;
+        }
+        if (tempholder.length < 3){
+            alert('Username too short!');
+            return false;
+        }
+        if (validateForm(tempholder)){
+            username = tempholder;
+            document.getElementById('introScreen').style.display = 'none';
+        }
+    }
+
+    let firstTime = true;
+    
+    const redSideMid = document.getElementById('redSideMid');
+    const blueSideMid = document.getElementById('blueSideMid');
+    const activateRed = () => {if(!sideView){redSideMid.classList.add('active');}}
+    const activateBlue = () => {if(!sideView){blueSideMid.classList.add('active');}}
+    const deactivateRed = () => {if (redSideMid.classList.contains('active')){redSideMid.classList.remove('active');}}
+    const deactivateBlue = () => {if (blueSideMid.classList.contains('active')){blueSideMid.classList.remove('active');}}
+    
+    redSideMid.addEventListener('mouseenter', activateRed);
+    redSideMid.addEventListener('mouseleave', deactivateRed);
+    blueSideMid.addEventListener('mouseenter', activateBlue);
+    blueSideMid.addEventListener('mouseleave', deactivateBlue);
+
+    const redSide = document.getElementById('redSide');
+    const blueSide = document.getElementById('blueSide');
+    const selectionTitle = document.getElementById('selectionTitle');
+    const arrows = document.querySelectorAll('.arrowContainer')
+    const midGround = document.getElementById('midGround');
+    redSideMid.addEventListener('click', ()=>{
+        if (!sideView){
+            redSide.style.flex = 90000;
+            blueSide.style.flex = 1;
+            document.querySelectorAll('.selection').forEach(element => {
+                element.style.display = 'none';
+            });
+            setTimeout(()=>{
+                if (sideView){
+                    document.querySelectorAll('.bar').forEach(element => {
+                        element.style.flex = 7;
+                        let child = element.firstElementChild;
+                        child.style.height = '100%';
+                        child.style.animationDelay = '0s';
+                    });
+                }
+            },500);
+            sideView=true;
+            selectionTitle.style.display='none';
+            arrows.forEach(element => {
+                element.style.display='none';
+            });
+            document.querySelectorAll('.instruction').forEach(element =>{
+                element.style.display='none';
+            })
+            if (firstTime){
+                document.querySelectorAll('.instruction2').forEach(element =>{
+                    element.style.display='block';
+                })
+            }
+            
+            document.documentElement.style.setProperty('--hoverOpacity', 0);
+        }else{
+            redSide.style.flex = 1;
+            blueSide.style.flex = 1;
+            sideView=false;
+            document.querySelectorAll('.instruction2').forEach(element =>{
+                    element.style.display='none';
+                })
+            document.querySelectorAll('.selection').forEach(element => {
+                element.style.display = 'block';
+            });
+            setTimeout(()=>{
+                if (!sideView){
+                    document.querySelectorAll('.bar').forEach(element => {
+                    element.style.flex = 1;
+                    let child = element.firstElementChild;
+                    child.style.height = '80%';
+                    child.style.animationDelay = '10s';
+                    });
+                    document.documentElement.style.setProperty('--hoverOpacity', 0.5);
+                }
+            },500);
+            if (firstTime){
+                selectionTitle.style.display='block';
+                arrows.forEach(element => {
+                    element.style.display='block';
+                }); 
+            }           
+        }
+        firstTime = false;
+    });
+    blueSideMid.addEventListener('click', ()=>{
+        if (!sideView){
+            blueSide.style.flex = 90000;
+            redSide.style.flex = 1;
+            selectionTitle.style.display='none';
+            document.querySelectorAll('.selection').forEach(element => {
+                element.style.display = 'none';
+            });
+            setTimeout(()=>{
+                if (sideView){
+                    document.querySelectorAll('.bar').forEach(element => {
+                        element.style.flex = 7;
+                        let child = element.firstElementChild;
+                        child.style.height = '100%';
+                        child.style.animationDelay = '0s';
+                    });
+                }
+            },500);
+            sideView=true;
+            arrows.forEach(element => {
+                element.style.display='none';
+            });
+            document.querySelectorAll('.instruction').forEach(element =>{
+                element.style.display='none';
+            })
+            if (firstTime){
+                document.querySelectorAll('.instruction2').forEach(element =>{
+                    element.style.display='block';
+                })
+            }
+            document.documentElement.style.setProperty('--hoverOpacity', 0);
+        }else{
+            redSide.style.flex = 1; 
+            blueSide.style.flex = 1;
+            sideView=false;
+            document.querySelectorAll('.selection').forEach(element => {
+                element.style.display = 'block';
+            });
+            document.querySelectorAll('.instruction2').forEach(element =>{
+                    element.style.display='none';
+                })
+            setTimeout(()=>{
+                if (!sideView){
+                    document.querySelectorAll('.bar').forEach(element => {
+                    element.style.flex = 1;
+                    let child = element.firstElementChild;
+                    child.style.height = '80%';
+                    child.style.animationDelay = '10s';
+                    });
+                    document.documentElement.style.setProperty('--hoverOpacity', 0.5);
+                }
+            },500);
+            if (firstTime){
+                arrows.forEach(element => {
+                    element.style.display='block';
+                });
+                selectionTitle.style.display='block';
+            }
+        }
+        firstTime = false;
+    });
+
+
+    function updateStats(){
+        document.getElementById('rightColumn').innerHTML = points+' pts<br>'+redPoints+' hrs<br>'+lifetimePoints+' pts<br>'+weeklyPoint+' pts <br>'+rank+'st'
+        document.getElementById('rightColumn2').innerHTML = points+' pts<br>'+bluePoints+' hrs<br>'+lifetimePoints2+' pts<br>'+weeklyPoint2+' pts <br>'+rank+'st'
+        document.getElementById('completeRed').style.flex = red;
+        document.getElementById('incompleteRed').style.flex = 500-red;
+        document.getElementById('completeBlue').style.flex = blue;
+        document.getElementById('incompleteBlue').style.flex = 500-blue;
+        document.getElementById('redProgress').textContent = red;
+        document.getElementById('blueProgress').textContent = blue;
+        localStorage.setItem('points', points);
+        localStorage.setItem('redPoints', redPoints);
+        localStorage.setItem('bluePoints', bluePoints);
+        localStorage.setItem('lifetimePoints', lifetimePoints);
+        localStorage.setItem('weeklyPoint', weeklyPoint);
+        localStorage.setItem('lifetimePoints2', lifetimePoints2);
+        localStorage.setItem('weeklyPoint2', weeklyPoint2);
+        document.getElementById('modifierRed').textContent = 'Modifier: '+modifier+'x';
+        document.getElementById('modifierBlue').textContent = 'Modifier: '+modifier2+'x';
+        localStorage.setItem('modifier', modifier);
+        localStorage.setItem('modifier2', modifier2); 
+    }
+
+    function addMultipleEventListeners(element, events, handler) {
+        events.split(' ').forEach(event => {
+            element.addEventListener(event, handler);
+        });
+    }
+
+    let shopItems = document.getElementsByClassName('itemBuy');
+    for (let i = 0; i<shopItems.length; i++){
+        shopItems[i].addEventListener('click', function() {
+            if (i == 0){
+                if (points>=10){points-=10;modifier = 2;}
+            }else if (i == 1){
+                if (points>=20){points-=20;modifier = 3;}
+            }else if (i == 2){
+                if (points>=30){points-=30;modifier = 4;}
+            }else if (i == 3){
+                if (points>=50){points-=50;modifier = 5;}
+            }
+            updateStats();
+        });
+    }
+
+    let shopItems2 = document.getElementsByClassName('itemBuy2');
+    for (let i = 0; i<shopItems2.length; i++){
+        shopItems2[i].addEventListener('click', function() {
+            if (i == 0){
+                if (points>=10){points-=10;modifier2 = 2;}
+            }else if (i == 1){
+                if (points>=20){points-=20;modifier2 = 3;}
+            }else if (i == 2){
+                if (points>=30){points-=30;modifier2 = 4;}
+            }else if (i == 3){
+                if (points>=50){points-=50;modifier2 = 5;}
+            }
+            updateStats();
+        });
+    }
+
+    function timerCreate(){
+        let timerRunning = false;
+        let timerType = 1;
+        const FULL_DASH_ARRAY = 283;
+        const WARNING_THRESHOLD = 10;
+        const ALERT_THRESHOLD = 5;
+
+        const COLOR_CODES = {
+            study: {
+                color:"green"
+            },
+            study2: {
+                color: "blue",
+            }
+        };
+
+        let TIME_LIMIT = 1800;
+        let timePassed = 0;
+        let timeLeft = TIME_LIMIT;
+        let timerInterval = null;
+        let remainingPathColor = COLOR_CODES.study.color;
+        let remainingPathColor2 = COLOR_CODES.study2.color;
+        let timeModifier = 100;
+
+        document.getElementById("timer").innerHTML = `
+            <div class="base-timer">
+            <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <g class="base-timer__circle">
+                <circle class="base-timer__path-elapsed" cx="50" cy="50" r="45"></circle>
+                <path
+                    id="base-timer-path-remaining"
+                    stroke-dasharray="283"
+                    class="base-timer__path-remaining ${remainingPathColor}"
+                    d="
+                    M 50, 50
+                    m -45, 0
+                    a 45,45 0 1,0 90,0
+                    a 45,45 0 1,0 -90,0
+                    "
+                ></path>
+                </g>
+            </svg>
+            <span id="base-timer-label" class="base-timer__label">${formatTime(
+                timeLeft
+            )}</span>
+            <span class="timerButtonContainer"><div class="timerControls" id="timerAdd">+</div><div id="timerButton">Start</div><div class="timerControls" id="timerMinus">-</div></span>
+            </div>
+        `;
+
+        document.getElementById("timer2").innerHTML = `
+            <div class="base-timer">
+            <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <g class="base-timer__circle">
+                <circle class="base-timer__path-elapsed" style="stroke: #263a45" cx="50" cy="50" r="45"></circle>
+                <path
+                    id="base-timer-path-remaining2"
+                    stroke-dasharray="283"
+                    class="base-timer__path-remaining ${remainingPathColor2}"
+                    d="
+                    M 50, 50
+                    m -45, 0
+                    a 45,45 0 1,0 90,0
+                    a 45,45 0 1,0 -90,0
+                    "
+                ></path>
+                </g>
+            </svg>
+            <span id="base-timer-label2" class="base-timer__label">${formatTime(
+                timeLeft
+            )}</span>
+            <span class="timerButtonContainer"><div style="background-color: #5789A3; color: #1C2B33;" class="timerControls" id="timerAdd2">+</div><div id="timerButton2">Start</div><div style="background-color: #5789A3; color: #1C2B33;" class="timerControls" id="timerMinus2">-</div></span>
+            </div>
+        `;
+        
+        function resetTimer(){
+            clearInterval(timerInterval);
+            timePassed = 0;
+            timeLeft = TIME_LIMIT;
+            timerInterval = null;
+            remainingPathColor = COLOR_CODES.study.color;
+            setCircleDasharray();
+            document.getElementById("base-timer-label").innerHTML = formatTime(
+                timeLeft
+                );
+            document.getElementById("base-timer-label2").innerHTML = formatTime(
+                timeLeft
+            );
+        }
+
+        document.getElementById('timerButton').addEventListener('click', ()=>{
+            timerType = 1;
+            changeButtonText();
+        });
+        document.getElementById('timerButton2').addEventListener('click', ()=>{
+            timerType = 2;
+            changeButtonText();
+        });
+        function changeButtonText(){
+            if (!timerRunning){
+                startTimer();
+                timerRunning = true;
+                document.getElementById('timerButton').textContent = 'Stop';
+                document.getElementById('timerButton2').textContent = 'Stop';
+            }else{
+                resetTimer();
+                timerRunning = false;
+                document.getElementById('timerButton').textContent = 'Start';
+                document.getElementById('timerButton2').textContent = 'Start';
+            }
+        }
+        
+        document.getElementById('timerAdd').addEventListener('click', timerAdd);
+        document.getElementById('timerAdd2').addEventListener('click', timerAdd);
+        function timerAdd(){
+            if (!timerRunning){
+                TIME_LIMIT+=900;
+                document.getElementById("base-timer-label").innerHTML = formatTime(
+                    TIME_LIMIT
+                );
+                document.getElementById("base-timer-label2").innerHTML = formatTime(
+                    TIME_LIMIT
+                );
+            }
+        }
+        document.getElementById('timerMinus').addEventListener('click', timerMinus);
+        document.getElementById('timerMinus2').addEventListener('click', timerMinus);
+        function timerMinus(){
+            if (!timerRunning){
+                if (TIME_LIMIT>=900){
+                    TIME_LIMIT-=900;
+                }
+                document.getElementById("base-timer-label").innerHTML = formatTime(
+                    TIME_LIMIT
+                );
+                document.getElementById("base-timer-label2").innerHTML = formatTime(
+                    TIME_LIMIT
+                );
+            }
+        }
+
+        function onTimesUp() {
+            clearInterval(timerInterval);
+            let pointsGain = (TIME_LIMIT/1800);
+            let data = {
+                team : "none",
+                points : 0,
+            };
+            if (timerType == 1){
+                pointsGain*=modifier;
+                data = {
+                    team : "red",
+                    points : pointsGain,
+                    user_id : userid,
+                    name : username,
+                };
+                redPoints+=TIME_LIMIT/3600;
+                lifetimePoints+=pointsGain;
+                weeklyPoint+=pointsGain;
+            }else if (timerType == 2){
+                pointsGain*=modifier2;
+                data = {
+                    team : "blue",
+                    points : pointsGain,
+                    user_id : userid,
+                    name : username,
+                };
+                bluePoints+=TIME_LIMIT/3600;
+                lifetimePoints2+=pointsGain;
+                weeklyPoint2+=pointsGain;
+            }
+            points+=pointsGain;
+            
+            fetch('http://127.0.0.1:8080/api/kiode', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+
+            updateStats();
+            timePassed = 0;
+            timeLeft = TIME_LIMIT;
+            timerInterval = null;
+            document.getElementById("base-timer-label").innerHTML = formatTime(0);
+            document.getElementById("base-timer-label2").innerHTML = formatTime(0);
+            timerRunning = false;
+            document.getElementById('timerButton').textContent = 'Start';
+            document.getElementById('timerButton2').textContent = 'Start';
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timePassed = timePassed += 1;
+                timeLeft = TIME_LIMIT - timePassed;
+                if (timerType == 1){
+                    document.getElementById("base-timer-label").innerHTML = formatTime(timeLeft);
+                }else if (timerType == 2){
+                    document.getElementById("base-timer-label2").innerHTML = formatTime(timeLeft);
+                }
+                setCircleDasharray();
+                if (timeLeft <= 0) {
+                    onTimesUp();
+                }
+            }, 1000/timeModifier);
+        }
+
+        function formatTime(time){
+            const minuetes = Math.floor(time / 60);
+            let seconds = time % 60;
+
+            if (seconds < 10) {
+            seconds = `0${seconds}`;
+            }
+
+            return `${minuetes}:${seconds}`;
+        }
+
+        function calculateTimeFraction() {
+            const rawTimeFraction = timeLeft / TIME_LIMIT;
+            return rawTimeFraction - (1 / TIME_LIMIT) * (1 - rawTimeFraction);
+        }
+
+        function setCircleDasharray() {
+            const circleDasharray = `${(
+                calculateTimeFraction() * FULL_DASH_ARRAY
+            ).toFixed(0)} 283`;
+            if (timerType == 1){
+                document
+                .getElementById("base-timer-path-remaining")
+                .setAttribute("stroke-dasharray", circleDasharray);
+                document
+                .getElementById("base-timer-path-remaining2")
+                .setAttribute("stroke-dasharray", FULL_DASH_ARRAY);
+            }else if (timerType == 2){
+                document
+                .getElementById("base-timer-path-remaining")
+                .setAttribute("stroke-dasharray", FULL_DASH_ARRAY);
+                document
+                .getElementById("base-timer-path-remaining2")
+                .setAttribute("stroke-dasharray", circleDasharray);
+            }
+            
+        }
+
+    }
+    timerCreate();
+</script>
+</html>
